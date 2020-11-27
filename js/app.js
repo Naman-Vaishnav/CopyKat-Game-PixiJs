@@ -1,7 +1,5 @@
 let app;
-let start;
-let red, green, blue, yellow;
-
+let start, red, green, blue, yellow;
 var color = ["red", "blue", "green", "yellow"];
 var seq = [0, 1, 2, 3];
 var userSeq = [];
@@ -9,7 +7,7 @@ var userTurn = false;
 var curStage = 0;
 var timeOut = false;
 var wrongInput = false;
-var startflag = false;
+var startflag, redflag, greenflag, blueflag, yellowflag = false;
 
 window.onload = function () {
     app = new PIXI.Application({
@@ -37,55 +35,38 @@ window.onload = function () {
 
     // Text Elements
 
-    const gameName = new PIXI.Text("CopyKat");
-    gameName.anchor.set(0.5);
-    gameName.x = 300;
-    gameName.y = 30;
-    gameName.style = new PIXI.TextStyle({
-        fontFamily: "Arcade",
-        fontSize: 70,
-    });
+    function createText(text, x, y, size) {
+        const temp = new PIXI.Text(text);
+        temp.anchor.set(0.5);
+        temp.x = x;
+        temp.y = y;
+        temp.style = new PIXI.TextStyle({
+            fontFamily: "Arcade",
+            fontSize: size,
+        });
+        return temp;
+    }
+
+    const gameName = createText("CopyKat", 300, 30, 70);
     app.stage.addChild(gameName);
 
-    const level = new PIXI.Text("Level 1");
-    level.anchor.set(0.5);
-    level.x = 100;
-    level.y = 500;
-    level.style = new PIXI.TextStyle({
-        fontFamily: "Arcade",
-        fontSize: 50,
-    });
+    const level = createText("Level 1", 100, 500, 50);
+    app.stage.addChild(level);
     function setLevel(val) {
         level.text = "Level " + val;
     }
-    app.stage.addChild(level);
 
-    const gameStatus = new PIXI.Text("Press play to start");
-    gameStatus.anchor.set(0.5);
-    gameStatus.x = 300;
-    gameStatus.y = 80;
-    gameStatus.style = new PIXI.TextStyle({
-        fontFamily: "Arcade",
-        fontSize: 50,
-    });
+    const gameStatus = createText("Press play to start", 300, 80, 50);
+    app.stage.addChild(gameStatus);
     function setStatus(val) {
         gameStatus.text = val;
     }
-    app.stage.addChild(gameStatus);
 
-    const score = new PIXI.Text("Score:0");
-    score.anchor.set(0.5);
-    score.x = 500;
-    score.y = 500;
-    score.style = new PIXI.TextStyle({
-        fontFamily: "Arcade",
-        fontSize: 50,
-    });
+    const score = createText("Score:0", 500, 500, 50);
+    app.stage.addChild(score);
     function setScore(val) {
         score.text = "Score:" + val;
     }
-    app.stage.addChild(score);
-
 
 
     function startGame() {
@@ -190,20 +171,20 @@ window.onload = function () {
     }
 
     function doneLoading() {
-        start = new PIXI.Sprite.from(app.loader.resources["start"].texture);
-        start.width = 100;
-        start.height = 100;
-        start.x = 260;
-        start.y = 110;
-        start.interactive = true;
-        start.buttonMode = true;
-        start.on("pointerup", startUp);
-        start.on("pointerdown", startDown);
 
-        function startUp() {
-            // startflag=false;
-            //start.texture=app.loader.resources["start"].texture;
+        function createSprite(resourceName, x, y) {
+            const temp = new PIXI.Sprite.from(app.loader.resources[resourceName].texture);
+            temp.width = 100;
+            temp.height = 100;
+            temp.x = x;
+            temp.y = y;
+            temp.interactive = true;
+            temp.buttonMode = true;
+            return temp;
         }
+        start = createSprite("start", 260, 110);
+        start.on("pointerdown", startDown);
+        app.stage.addChild(start);
         function startDown() {
             if (!startflag) {
                 startflag = true;
@@ -214,43 +195,25 @@ window.onload = function () {
                 reset();
             }
         }
-        app.stage.addChild(start);
 
-        red = new PIXI.Sprite.from(app.loader.resources["red"].texture);
-
-        red.width = 100;
-        red.height = 100;
-        red.x = 200;
-        red.y = 230;
-        red.interactive = true;
-        red.buttonMode = true;
+        red = createSprite("red", 200, 230);
         red.on("pointerup", redUp);
         red.on("pointerdown", redDown);
-
-       
+        app.stage.addChild(red);
         function redUp() {
-            Redflag = false;
+            redflag = false;
             red.texture = app.loader.resources["red"].texture;
         }
         function redDown() {
-            Redflag = true;
+            redflag = true;
             red.texture = app.loader.resources["black"].texture;
             userSeq.push(0);
         }
-        app.stage.addChild(red);
 
-        green = new PIXI.Sprite.from(app.loader.resources["green"].texture);
-
-        green.width = 100;
-        green.height = 100;
-        green.x = 300;
-        green.y = 230;
-        green.interactive = true;
-        green.buttonMode = true;
+        green = createSprite("green", 300, 230);
         green.on("pointerup", greenUp);
         green.on("pointerdown", greenDown);
-
-        var greenflag = false;
+        app.stage.addChild(green);
         function greenUp() {
             greenflag = false;
             green.texture = app.loader.resources["green"].texture;
@@ -261,20 +224,10 @@ window.onload = function () {
             userSeq.push(2);
         }
 
-        app.stage.addChild(green);
-
-        yellow = new PIXI.Sprite.from(app.loader.resources["yellow"].texture);
-
-        yellow.width = 100;
-        yellow.height = 100;
-        yellow.x = 200;
-        yellow.y = 330;
-        yellow.interactive = true;
-        yellow.buttonMode = true;
+        yellow = createSprite("yellow", 200, 330);
         yellow.on("pointerup", yellowUp);
         yellow.on("pointerdown", yellowDown);
-
-        var yellowflag = false;
+        app.stage.addChild(yellow);
         function yellowUp() {
             yellowflag = false;
             yellow.texture = app.loader.resources["yellow"].texture;
@@ -284,20 +237,11 @@ window.onload = function () {
             yellow.texture = app.loader.resources["black"].texture;
             userSeq.push(3);
         }
-        app.stage.addChild(yellow);
 
-        blue = new PIXI.Sprite.from(app.loader.resources["blue"].texture);
-
-        blue.width = 100;
-        blue.height = 100;
-        blue.x = 300;
-        blue.y = 330;
-        blue.interactive = true;
-        blue.buttonMode = true;
+        blue = createSprite("blue", 300, 330);
         blue.on("pointerup", blueUp);
         blue.on("pointerdown", blueDown);
-
-        var blueflag = false;
+        app.stage.addChild(blue);
         function blueUp() {
             blueflag = false;
             blue.texture = app.loader.resources["blue"].texture;
@@ -307,6 +251,5 @@ window.onload = function () {
             blue.texture = app.loader.resources["black"].texture;
             userSeq.push(1);
         }
-        app.stage.addChild(blue);
     }
 };
